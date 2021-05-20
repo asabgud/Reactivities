@@ -14,8 +14,18 @@ export default class ActivityStore {
     }
 
     get activitiesByDate(){
-        return Array.from(this.activityRegistry.values())
-        .sort((a,b) => Date.parse(a.date) - Date.parse(b.date));
+        return Array.from(this.activityRegistry.values()).sort((a,b) => 
+            Date.parse(a.date) - Date.parse(b.date));
+    }
+
+    get groupedActivities()  {
+        return Object.entries(
+            this.activitiesByDate.reduce((activities, activity) => {
+                const date = activity.date; 
+                activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+                return activities;
+            }, {} as {[key: string]: Activity[]})
+        )
     }
 
     loadActivities = async () => {
@@ -27,7 +37,6 @@ export default class ActivityStore {
                 this.setActivity(activity);
             }) 
             this.setLoadingInitial(false); 
-             
         }catch(error){
             console.log(error);
             this.setLoadingInitial(true);
@@ -81,7 +90,6 @@ export default class ActivityStore {
                 this.editMode = false; 
                 this.loading = false; 
             })
-
         } catch(error){
             console.log(error);
             runInAction(() => {
@@ -107,7 +115,6 @@ export default class ActivityStore {
                 this.loading = false; 
             })
         }
-        
     }
 
     deleteActivity = async (id: string) => {
