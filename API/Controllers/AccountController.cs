@@ -48,11 +48,13 @@ namespace API.Controllers
         {   //Check if email already singed up
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                return BadRequest("Email taken");
+                ModelState.AddModelError("email", "Email taken");
+               return ValidationProblem();
             }
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
-                return BadRequest("UserName taken");
+               ModelState.AddModelError("username", "Username taken");
+               return ValidationProblem();
             }
             
             var user = new AppUser 
@@ -70,6 +72,7 @@ namespace API.Controllers
 
             return BadRequest("Problem registereing user");
         }
+        
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
@@ -81,13 +84,12 @@ namespace API.Controllers
         private UserDto CreateUserObject(AppUser user)
         { 
             return new UserDto
-               {
-                    DisplayName = user.DisplayName,
-                    Image = null, 
-                    Token = _tokenService.CreateToken(user),
-                    UserName  = user.UserName
+            {
+                DisplayName = user.DisplayName,
+                Image = null, 
+                Token = _tokenService.CreateToken(user),
+                UserName  = user.UserName
             };
-        
         }
-}
+    }
 }

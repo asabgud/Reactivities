@@ -15,7 +15,7 @@ export default observer (function ActivityDashboard(){ //activites destructured
       if (activityRegistry.size <= 1) loadActivities();
     }, [activityRegistry.size, loadActivities]) //[] ensures that this will only run once, I think because activities is not populated, it will happen in the state
 
-    if (activityStore.loadingInitial) return <LoadingComponent content='Loading app'/>
+    if (activityStore.loadingInitial) return <LoadingComponent content='Loading activities'/>
 
     return(
         <Grid>
